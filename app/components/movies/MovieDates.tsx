@@ -18,10 +18,20 @@ type DateButtonProps = {
   children: React.ReactNode
 }
 
+interface Movie {
+  movie_id: number
+  title: string
+  description: string
+  release_date: string
+  rating: number
+  poster_path: string
+  backdrop_path: string
+}
+
 const DateButton = ({ children }: DateButtonProps) => {
   return (
     <Link
-      to="/cartelera/123"
+      to="/cartelera"
       className="w inline-block w-28 rounded-full border border-gray-500 bg-white px-6 py-1 text-center text-gray-500 hover:bg-gray-100"
     >
       {children}
@@ -29,24 +39,25 @@ const DateButton = ({ children }: DateButtonProps) => {
   )
 }
 
-export const OtherMoviesCarousel = () => {
+export const OtherMoviesCarousel = ({ movies }: { movies: Movie[] }) => {
   return (
     <Carousel className="md: mx-auto w-[80%] lg:w-[90%]">
       <CarouselContent>
-        {Array.from({ length: 10 }).map((_, index) => (
+        {movies.map((movie) => (
           <CarouselItem
-            key={index}
-            className="transition-transform hover:scale-105 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+            key={movie.movie_id}
+            className="h-full transition-transform hover:scale-105 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
           >
-            <Link className="flex flex-col gap-4 rounded-md border p-1" to="/">
+            <Link
+              className="flex h-full flex-col gap-4 rounded-md border p-1"
+              to={`/cartelera/${movie.movie_id}`}
+            >
               <img
                 className="aspect-[2/3] w-full rounded-md object-cover"
-                src="https://admin.cinemasroyalfilms.com/assets/images/movies-poster/1703626035495-Kung%20Fu%20Panda%204.png"
-                alt=""
+                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                alt="asd"
               />
-              <h3 className="text-center text-lg font-bold">
-                Movie {index + 1}
-              </h3>
+              <h3 className="text-md text-center font-bold">{movie.title}</h3>
             </Link>
           </CarouselItem>
         ))}

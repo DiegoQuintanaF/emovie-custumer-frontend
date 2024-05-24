@@ -82,8 +82,18 @@ export default function Login() {
 
       <h1 className="p-2 text-center text-xl font-bold">Iniciar Sesión</h1>
       <Form method="POST" className="flex w-full flex-col gap-4 p-2">
-        <Input label="Email" name="email" type="email" />
-        <Input label="Contraseña" name="password" type="password" />
+        <Input
+          label="Email"
+          name="email"
+          type="email"
+          hasError={errors?.hasError}
+        />
+        <Input
+          label="Contraseña"
+          name="password"
+          type="password"
+          hasError={errors?.hasError}
+        />
         <button
           type="submit"
           className="w-full rounded-md bg-black p-2 text-white disabled:bg-slate-800"

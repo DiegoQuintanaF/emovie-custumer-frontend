@@ -31,7 +31,7 @@ export default function Index() {
           <Card
             key={movie.movie_id}
             title={movie.title}
-            to="/cartelera/123"
+            to={`/cartelera/${movie.movie_id}`}
             releaseDate={movie.release_date}
             rating={movie.rating}
             posterPath={movie.poster_path}

@@ -1,15 +1,47 @@
-import { useParams } from '@remix-run/react'
+import { LoaderFunction } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+import { format } from 'date-fns'
 import { MovieDates, OtherMoviesCarousel } from '~/components/movies/MovieDates'
 
+interface Movie {
+  movie_id: number
+  title: string
+  description: string
+  release_date: string
+  rating: number
+  poster_path: string
+  backdrop_path: string
+}
+
+export const loader: LoaderFunction = async ({ params }) => {
+  const { movieId } = params
+
+  const movie: Movie = await fetch(
+    `http://localhost:3000/api/v1/movies/${movieId}`
+  )
+    .then((res) => res.json())
+    .then((res) => res.result)
+
+  const movies: Movie[] = await fetch(`http://localhost:3000/api/v1/movies`)
+    .then((res) => res.json())
+    .then((res) => res.results)
+
+  const otherMovies = movies.filter(
+    (movie) => movie.movie_id !== parseInt(movieId as string)
+  )
+
+  return [movie, otherMovies]
+}
+
 export default function MovieDetails() {
-  const { movieId } = useParams()
+  const [movie, otherMovies]: [Movie, Movie[]] = useLoaderData()
 
   return (
     <div className="min-h-page pt-32">
       <img
-        className="absolute top-[57px] z-[-1] h-96 w-full object-cover blur-sm"
-        src="https://image.tmdb.org/t/p/w1280/1XDDXPXGiI8id7MrUxK36ke7gkX.jpg"
-        alt="kung fu panda 4"
+        className="absolute top-[57px] z-[-1] h-96 w-full object-cover object-top blur-sm"
+        src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
+        alt={String(movie.movie_id)}
       />
 
       <div className="container z-50 flex w-dvw flex-col gap-4 md:flex-row">
@@ -17,33 +49,30 @@ export default function MovieDetails() {
           <figure className="flex aspect-[2/3] h-96 w-fit justify-center">
             <img
               className="aspect-[2/3] h-96 w-auto rounded-md object-cover shadow-xl"
-              src="https://admin.cinemasroyalfilms.com/assets/images/movies-poster/1703626035495-Kung%20Fu%20Panda%204.png"
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt=""
             />
           </figure>
           <h1 className="w-64 text-balance text-center text-2xl font-bold">
-            Movie {movieId}
+            {movie.title}
           </h1>
         </div>
 
         <div className="flex flex-col gap-4 md:mt-64 md:pt-2">
           <article className="z-50 flex flex-col gap-4">
             <h2 className="text-lg font-bold">Sinopsis</h2>
-            <p className="text-pretty">
-              Po se prepara para ser el líder espiritual del Valle de la Paz,
-              buscando un sucesor como Guerrero Dragón. Mientras entrena a un
-              nuevo practicante de kung fu, enfrenta al villano llamado el
-              Camaleón, que evoca villanos del pasado, desafiando todo lo que Po
-              y sus amigos han aprendido.
-            </p>
+            <p className="text-pretty">{movie.description}</p>
             <hr />
             <div className="flex flex-col md:flex-row md:gap-4">
               <p className="font-bold text-gray-500">
                 Fecha de lanzamiento:{' '}
-                <span className="text-sm font-normal">12-03-2024</span>
+                <span className="text-sm font-normal">
+                  {format(new Date(movie.release_date), 'dd-MM-yyyy')}
+                </span>
               </p>
               <p className="font-bold text-gray-500">
-                Calificación: <span className="text-sm font-normal">7.1</span>
+                Calificación:{' '}
+                <span className="text-sm font-normal">{movie.rating}</span>
               </p>
             </div>
           </article>
@@ -57,7 +86,7 @@ export default function MovieDetails() {
           <h2 className="text-xl font-bold">Otras funciones</h2>
 
           <div>
-            <OtherMoviesCarousel />
+            <OtherMoviesCarousel movies={otherMovies} />
           </div>
           <br />
         </div>
