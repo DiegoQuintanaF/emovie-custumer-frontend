@@ -2,6 +2,7 @@ import { LoaderFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { format } from 'date-fns'
 import { MovieDates, OtherMoviesCarousel } from '~/components/movies/MovieDates'
+import { env } from '~/config/env'
 
 interface Movie {
   movie_id: number
@@ -16,13 +17,11 @@ interface Movie {
 export const loader: LoaderFunction = async ({ params }) => {
   const { movieId } = params
 
-  const movie: Movie = await fetch(
-    `http://localhost:3000/api/v1/movies/${movieId}`
-  )
+  const movie: Movie = await fetch(`${env.API_URL}/movies/${movieId}`)
     .then((res) => res.json())
     .then((res) => res.result)
 
-  const movies: Movie[] = await fetch(`http://localhost:3000/api/v1/movies`)
+  const movies: Movie[] = await fetch(`${env.API_URL}/movies`)
     .then((res) => res.json())
     .then((res) => res.results)
 

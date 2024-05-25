@@ -1,13 +1,14 @@
 import { LoaderFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { Card } from '~/components/movies/Card'
+import { env } from '~/config/env'
 
 export const loader: LoaderFunction = async () => {
-  const movies = await fetch('http://localhost:3000/api/v1/movies')
+  const movies = await fetch(`${env.API_URL}/movies`)
     .then((res) => res.json())
     .then((res) => res.results)
 
-  return movies
+  return movies ?? []
 }
 
 interface movie {

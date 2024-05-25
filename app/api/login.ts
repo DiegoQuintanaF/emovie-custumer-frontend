@@ -20,7 +20,7 @@ export const login = async (
   password: string
 ): Promise<LoginResult> => {
   try {
-    const response = await fetch(`${env.API_URL}/api/v1/auth/login`, {
+    const response = await fetch(`${env.API_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
